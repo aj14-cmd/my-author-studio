@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Author Studio</title>
+<style>
+:root{--ink:#26344d;--muted:#6b778c;--purple:#7255d7;--lav:#eee9ff;--teal:#2b9d9a;--gold:#ffd76a;--pink:#f5a7c8;--blue:#9bcdf4;--green:#9ed5ae;--bg:#f3f6fb;--white:#fff;--shadow:0 8px 24px #26344d18}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eef5fc,#faf6ff 55%,#fff9e9);font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;color:var(--ink)}
+.app{max-width:1320px;margin:auto;padding:18px}.top{background:linear-gradient(120deg,#5846bd,#8b70e8);color:#fff;border-radius:28px;padding:25px 30px;box-shadow:var(--shadow);position:relative}.top:after{content:"✦ ✧ ✦";position:absolute;right:25px;top:18px;font-size:28px;opacity:.3}.tag{display:inline-block;background:#fff;color:#5c47bd;border-radius:999px;padding:6px 11px;font-size:11px;font-weight:bold}.top h1{font-size:36px;margin:9px 0 3px}.top p{margin:0;max-width:800px}.identity{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.identity input{max-width:240px;background:#ffffff22;color:#fff;border-color:#ffffff66}.identity input::placeholder{color:#eee}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.nav button{background:#fff;border:0;border-radius:13px;padding:11px 14px;font-weight:bold;color:var(--ink);box-shadow:0 3px 10px #26344d12}.nav button.active{background:var(--purple);color:#fff}
+.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:17px}.card{grid-column:span 12;background:#fff;border-radius:21px;padding:21px;box-shadow:var(--shadow)}.s8{grid-column:span 8}.s6{grid-column:span 6}.s4{grid-column:span 4}
+h2{margin:0 0 6px;font-size:25px}h3{margin:0 0 8px}.muted{color:var(--muted);font-size:14px;line-height:1.5}.pill{display:inline-block;background:var(--lav);color:#5a43b5;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:bold}
+label{display:block;font-weight:bold;font-size:13px;margin:12px 0 5px}input,textarea,select{width:100%;border:2px solid #dce3ee;border-radius:12px;padding:10px 12px;background:#fff;color:var(--ink)}textarea{min-height:100px;resize:vertical}.row{display:flex;gap:10px}.row>*{flex:1}
+.btn{background:var(--purple);color:#fff;border:0;border-radius:12px;padding:11px 15px;font-weight:bold}.btn.alt{background:#edf1f7;color:var(--ink)}.btn.teal{background:var(--teal)}.btn.danger{background:#f3dce3;color:#8d2948}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.progress{height:12px;background:#e8edf5;border-radius:99px;overflow:hidden;margin:11px 0}.bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--purple));width:0}
+.module{border:2px solid #e1e7f0;border-radius:17px;padding:15px;margin:10px 0;background:#fff}.module.complete{border-color:#9fd4ac;background:#f4fff6}.modulehead{display:flex;justify-content:space-between;gap:10px}.status{font-size:11px;font-weight:bold;background:#edf1f6;border-radius:999px;padding:5px 8px;white-space:nowrap}.complete .status{background:#dcf4e3;color:#287646}
+.prompt{background:#fff8dc;border-left:6px solid var(--gold);padding:12px 14px;border-radius:11px;line-height:1.45}.callout{background:#effbf9;border-left:6px solid var(--teal);padding:12px 14px;border-radius:11px;line-height:1.45}
+.traits{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}.trait{background:#edf6ff;border-radius:999px;padding:7px 10px;font-size:13px}.trait button{border:0;background:none;color:#a23a57}.add{display:flex;gap:7px}.add input{flex:1}
+.chapter{border:2px solid #dfe6f0;border-radius:17px;padding:15px;margin-top:12px}.chapter textarea{min-height:180px}.chapter h3{display:flex;justify-content:space-between}.wordcount{font-size:12px;color:var(--muted)}
+.check{display:flex;gap:8px;align-items:flex-start;margin:9px 0}.check input{width:auto;margin-top:3px}
+.cover{min-height:330px;border:3px dashed #ccd5e4;border-radius:18px;padding:25px;display:flex;flex-direction:column;justify-content:center;text-align:center;background:#fcfdff}.cover input{font-size:25px;text-align:center;border:0;background:transparent;font-weight:bold}.cover textarea{border:0;text-align:center;background:transparent}.cover .star{font-size:55px}
+.small{font-size:12px}.hide{display:none!important}
+@media(max-width:850px){.s8,.s6,.s4{grid-column:span 12}.row{flex-direction:column}}
+@media print{body{background:#fff}.nav,.no-print,.top .identity,footer{display:none!important}.view{display:block!important}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+
+/* Canvas / iframe embed mode */
+body.embed-mode .app{max-width:none;padding:8px}
+body.embed-mode .top{border-radius:18px;padding:18px 22px}
+body.embed-mode .top h1{font-size:28px}
+body.embed-mode .top p{font-size:14px}
+body.embed-mode .identity{display:none}
+body.embed-mode .nav{margin:9px 0}
+body.embed-mode .nav button{padding:9px 11px;font-size:12px}
+body.embed-mode footer{display:none}
+
+
+.cloud-ok{color:#287646;font-weight:bold}.cloud-warn{color:#8b6500;font-weight:bold}.roster-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-top:10px}.roster-grid>div{padding:9px 10px;border:1px solid #e1e7f0;border-radius:10px;background:#fbfcff}.roster-head{font-weight:bold;background:#f0edff!important}.sync-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#9aa7b8;margin-right:6px}.sync-dot.ok{background:#49a66a}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<span class="tag">5TH GRADE • YEAR-LONG AUTHOR PROJECT</span>
+<h1>📚 My Author Studio</h1>
+<p>Your digital writing workshop: build a character, invent a world, plan a story, draft a manuscript, revise like an author, and prepare your book for publication. Your work can sync to your class cloud space.</p>
+<div class="identity"><input id="student" placeholder="Student author name"><input id="bookTitle" placeholder="Working book title"></div>
+</header>
+
+<nav class="nav no-print">
+<button class="active" onclick="view('dashboard',this)">🏠 Studio Home</button>
+<button onclick="view('character',this)">👤 Character</button>
+<button onclick="view('setting',this)">🌎 Setting</button>
+<button onclick="view('plot',this)">🧭 Plot</button>
+<button onclick="view('voice',this)">🎙️ Voice & POV</button>
+<button onclick="view('draft',this)">✍️ Manuscript</button>
+<button onclick="view('revise',this)">🔎 Revision</button>
+<button onclick="view('publish',this)">🎨 Publish</button>
+<button onclick="view('teacher',this)">🧑‍🏫 Teacher</button>
+</nav>
+
+<section id="dashboard" class="view active">
+<div class="grid">
+<div class="card s8"><span class="pill">WELCOME, AUTHOR</span><h2 id="welcome">Let's build your book.</h2><p class="muted">This is your home base. Your project is saved automatically in this browser. Use Export Project to make a backup you can move to another device.</p><div class="progress"><div id="overallBar" class="bar"></div></div><b id="overallText">0% of your studio complete</b></div>
+<div class="card s4"><h3>💾 Your Project</h3>
+<p class="muted">Autosave works in this browser. If your teacher connects the class cloud, you can also save and return from another device.</p>
+<div class="actions"><button class="btn" onclick="exportProject()">⬇️ Export</button><button class="btn alt" onclick="document.getElementById('import').click()">⬆️ Import</button></div>
+<div class="actions"><button class="btn teal" onclick="cloudSave()">☁️ Save to Class Cloud</button><button class="btn alt" onclick="cloudLoad()">↻ Load My Cloud Copy</button></div>
+<div id="cloudStatus" class="small muted">Cloud sync is not configured yet.</div>
+<input id="import" class="hide" type="file" accept=".json" onchange="importProject(event)"></div>
+<div class="card s6"><h3>🗺️ Your Author Journey</h3><div id="journey"></div></div>
+<div class="card s6"><h3>🎯 Today's Author Move</h3><div class="prompt"><b>Don't just tell the reader.</b><br>Ask yourself: What can I show through a character's choices, actions, thoughts, dialogue, and reactions?</div><label>My writing goal today</label><textarea id="dailyGoal" placeholder="Today I will..."></textarea></div>
+<div class="card s12"><h3>🧠 Author Habits</h3><div class="row"><div><div class="check"><input type="checkbox" data-habit="h1"> I make purposeful choices.</div><div class="check"><input type="checkbox" data-habit="h2"> I use evidence from my own writing when revising.</div></div><div><div class="check"><input type="checkbox" data-habit="h3"> I take creative risks.</div><div class="check"><input type="checkbox" data-habit="h4"> I revise instead of simply correcting.</div></div></div></div>
+</div></section>
+
+<section id="character" class="view">
+<div class="grid">
+<div class="card s8"><span class="pill">MODULE 1 • ELA.5.R.1.3</span><h2>👤 Character Creator</h2><p class="muted">Develop a character whose experiences, beliefs, traits, and choices create a clear perspective.</p>
+<div class="row"><div><label>Character name</label><input id="cName"></div><div><label>Age</label><input id="cAge"></div></div>
+<label>One-sentence character pitch</label><textarea id="cPitch" placeholder="Who are they, and what makes them interesting?"></textarea>
+<label>Appearance & style</label><textarea id="cAppearance"></textarea>
+<label>Mini biography</label><textarea id="cBio"></textarea>
+<label>Family history & important experiences</label><textarea id="cFamily"></textarea>
+</div>
+<div class="card s4"><h3>🧠 Perspective Lab</h3><div class="callout"><b>Experience → Belief → Feeling → Reaction → Perspective</b></div>
+<label>Internal traits</label><div class="add"><input id="intInput" placeholder="determined"><button class="btn" onclick="trait('int')">+</button></div><div id="intTraits" class="traits"></div>
+<label>External traits</label><div class="add"><input id="extInput" placeholder="energetic"><button class="btn" onclick="trait('ext')">+</button></div><div id="extTraits" class="traits"></div>
+<label>Greatest strength</label><textarea id="cStrength"></textarea><label>Growing edge / weakness</label><textarea id="cWeak"></textarea>
+</div>
+<div class="card s6"><h3>❤️ What Matters Most?</h3><label>Greatest hope</label><input id="cHope"><label>Greatest fear</label><input id="cFear"><label>Core belief</label><input id="cBelief"><label>Big question</label><input id="cQuestion"></div>
+<div class="card s6"><h3>🎭 Reaction Test</h3><label>They are embarrassed in front of everyone.</label><textarea id="cReact1"></textarea><label>They fail at something important.</label><textarea id="cReact2"></textarea><label>They must choose between helping a friend and protecting themselves.</label><textarea id="cReact3"></textarea></div>
+<div class="card s8"><h3>🧗 Character Challenge</h3><label>A challenge that connects to a fear, weakness, goal, or belief</label><textarea id="cChallenge"></textarea><label>How will they respond?</label><textarea id="cOvercome"></textarea><label>How might this challenge change their perspective?</label><textarea id="cChange"></textarea></div>
+<div class="card s4"><h3>🪞 Perspective Evidence</h3><label>My character believes...</label><textarea id="cEvidence1"></textarea><label>This belief comes from...</label><textarea id="cEvidence2"></textarea><label>The reader can infer this perspective because...</label><textarea id="cEvidence3"></textarea></div>
+</div></section>
+
+<section id="setting" class="view"><div class="grid">
+<div class="card s8"><span class="pill">MODULE 2 • SETTING & WORLD BUILDING</span><h2>🌎 Build the World</h2><p class="muted">Create a setting that does more than sit in the background. Let place, time, culture, and atmosphere affect the story.</p>
+<label>Where and when does the story happen?</label><textarea id="sWhere"></textarea><label>What does the reader see, hear, smell, taste, and feel?</label><textarea id="sSensory"></textarea><label>What makes this place unique?</label><textarea id="sUnique"></textarea></div>
+<div class="card s4"><h3>🌦️ Mood & Atmosphere</h3><label>Overall mood</label><input id="sMood" placeholder="mysterious, joyful, tense..."><label>How will the setting create that mood?</label><textarea id="sMoodHow"></textarea><label>How does the setting affect your character?</label><textarea id="sEffect"></textarea></div>
+<div class="card s12"><h3>🔬 Setting Research / Details</h3><p class="muted">Add facts, vocabulary, landmarks, traditions, technology, natural features, or other details that make the world believable.</p><textarea id="sResearch"></textarea></div>
+</div></section>
+
+<section id="plot" class="view"><div class="grid">
+<div class="card s12"><span class="pill">MODULE 3 • PLOT, CONFLICT & STRUCTURE</span><h2>🧭 Plot Architect</h2><p class="muted">Plan before drafting. Your character's goal and the obstacles standing in the way should drive the story.</p></div>
+<div class="card s4"><h3>🌟 Beginning</h3><label>Character + ordinary world</label><textarea id="pBeginning"></textarea><label>Inciting problem</label><textarea id="pInciting"></textarea></div>
+<div class="card s4"><h3>⚡ Middle</h3><label>Major obstacles</label><textarea id="pObstacles"></textarea><label>Turning point</label><textarea id="pTurn"></textarea></div>
+<div class="card s4"><h3>🏁 End</h3><label>Climax</label><textarea id="pClimax"></textarea><label>Resolution / new normal</label><textarea id="pResolution"></textarea></div>
+<div class="card s6"><h3>🎯 Character Goal</h3><textarea id="pGoal" placeholder="What does the character want?"></textarea></div><div class="card s6"><h3>🧱 Central Conflict</h3><textarea id="pConflict" placeholder="What stands in the way?"></textarea></div>
+<div class="card s12"><h3>📈 Character Arc</h3><div class="row"><div><label>At the beginning, my character believes...</label><textarea id="pBefore"></textarea></div><div><label>By the end, my character understands...</label><textarea id="pAfter"></textarea></div><div><label>The events that cause the change are...</label><textarea id="pArc"></textarea></div></div></div>
+</div></section>
+
+<section id="voice" class="view"><div class="grid">
+<div class="card s6"><span class="pill">MODULE 4 • POINT OF VIEW & VOICE</span><h2>🎙️ Find Your Voice</h2><label>Point of view</label><select id="vPOV"><option>First person — I / we</option><option>Third person limited — one character's perspective</option><option>Third person omniscient — narrator knows more than characters</option></select><label>Why does this POV fit the story?</label><textarea id="vWhy"></textarea><label>What should the reader feel from the narrator's voice?</label><textarea id="vFeel"></textarea></div>
+<div class="card s6"><h3>💬 Dialogue Lab</h3><label>Write a short exchange between two characters.</label><textarea id="vDialogue"></textarea><label>What does the dialogue reveal without directly explaining it?</label><textarea id="vReveal"></textarea></div>
+<div class="card s12"><h3>🎨 Word Choice & Style</h3><div class="row"><div><label>Words/phrases that fit my story's voice</label><textarea id="vWords"></textarea></div><div><label>Sentence patterns or techniques I want to use</label><textarea id="vStyle"></textarea></div></div></div>
+</div></section>
+
+<section id="draft" class="view"><div class="grid">
+<div class="card s8"><span class="pill">MODULE 5 • MANUSCRIPT</span><h2>✍️ My Manuscript</h2><p class="muted">Draft freely first. You can revise later. Use the planning modules above when you need a reminder of your story.</p><div id="chapters"></div><div class="actions"><button class="btn" onclick="addChapter()">➕ Add Chapter</button><button class="btn alt" onclick="insertScenePrompt()">💡 Add Writing Prompt</button></div></div>
+<div class="card s4"><h3>📊 Draft Tracker</h3><div class="kpi" id="wordCount">0</div><div class="muted">words in manuscript</div><div class="progress"><div id="draftBar" class="bar"></div></div><p class="small">Aim for meaningful writing, not a magic number. Your teacher can set a class goal.</p><label>My draft goal</label><input id="draftGoal" type="number" value="3000"></div>
+</div></section>
+
+<section id="revise" class="view"><div class="grid">
+<div class="card s8"><span class="pill">MODULE 6 • REVISION & EDITING</span><h2>🔎 Revision Studio</h2><p class="muted">Revision means changing the writing to make it stronger. Editing means correcting conventions. Do both—but don't confuse them.</p>
+<div class="check"><input type="checkbox" data-revise="r1"> My character has a clear goal, motivation, and perspective.</div><div class="check"><input type="checkbox" data-revise="r2"> My setting affects the story.</div><div class="check"><input type="checkbox" data-revise="r3"> The conflict creates meaningful obstacles.</div><div class="check"><input type="checkbox" data-revise="r4"> I show important feelings through actions, thoughts, dialogue, and details.</div><div class="check"><input type="checkbox" data-revise="r5"> My beginning hooks the reader.</div><div class="check"><input type="checkbox" data-revise="r6"> My ending connects to the character's journey.</div><div class="check"><input type="checkbox" data-revise="r7"> I checked dialogue, punctuation, spelling, and paragraphing.</div>
+<label>My biggest revision goal</label><textarea id="rGoal"></textarea><label>A before/after example from my writing</label><textarea id="rExample"></textarea></div>
+<div class="card s4"><h3>👥 Feedback</h3><label>Peer reviewer</label><input id="peerName"><label>One thing the reader understood</label><textarea id="peerGlow"></textarea><label>One question the reader had</label><textarea id="peerQuestion"></textarea><label>One change I will consider</label><textarea id="peerChange"></textarea></div>
+<div class="card s12"><h3>🧑‍💻 Author Reflection</h3><textarea id="rReflection" placeholder="What changed between your first draft and your current draft? Why?"></textarea></div>
+</div></section>
+
+<section id="publish" class="view"><div class="grid">
+<div class="card s8"><span class="pill">MODULE 7 • PUBLISHING</span><h2>🎨 Book Cover Studio</h2><div class="cover"><div class="star">✦</div><input id="coverTitle" placeholder="YOUR BOOK TITLE"><textarea id="coverSubtitle" placeholder="A short subtitle or hook"></textarea><p id="coverAuthor">By Your Name</p></div><div class="actions"><button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button></div></div>
+<div class="card s4"><h3>📚 Publication Checklist</h3><div id="pubChecks"></div></div>
+<div class="card s12"><h3>📝 Back-Cover Blurb</h3><textarea id="blurb" placeholder="Hook the reader without giving away the whole story..."></textarea></div>
+<div class="card s12"><h3>🎉 Author's Note</h3><textarea id="authorsNote" placeholder="Why did you write this story? What do you hope readers take away?"></textarea></div>
+</div></section>
+
+<section id="teacher" class="view"><div class="grid">
+<div class="card s6"><span class="pill">TEACHER DASHBOARD</span><h2>🧑‍🏫 Add Your Next Module</h2><p class="muted">The studio is designed to grow with your curriculum. Add standards, skills, mini-lessons, and project checkpoints here.</p>
+<label>Module title</label><input id="tmTitle" placeholder="Example: Theme & Central Message"><label>Standard</label><input id="tmStandard" placeholder="Florida B.E.S.T. code"><label>Student goal</label><textarea id="tmGoal"></textarea><label>Weeks / dates</label><input id="tmWeeks" placeholder="Weeks 7–8"><button class="btn" onclick="addTeacherModule()">➕ Add to Studio</button></div>
+<div class="card s6"><h3>🗂️ Studio Modules</h3><div id="teacherModules"></div></div>
+<div class="card s12"><h3>💡 Suggested Instructional Checkpoints</h3><div class="row"><div class="prompt"><b>Mini-lesson</b><br>Teach the skill explicitly, then immediately apply it to the student's own book.</div><div class="prompt"><b>Author work session</b><br>Students create, draft, revise, or reflect inside the studio.</div><div class="prompt"><b>Conference</b><br>Teacher checks one craft move and gives one next step.</div></div></div>
+</div></section>
+
+<footer>My Author Studio • Local autosave + optional class cloud sync. Export regularly for a portable backup.</footer>
+</div>
+<script>
+if(new URLSearchParams(location.search).get('embed')==='1') document.body.classList.add('embed-mode');
+const fields=`student bookTitle dailyGoal cName cAge cPitch cAppearance cBio cFamily cStrength cWeak cHope cFear cBelief cQuestion cReact1 cReact2 cReact3 cChallenge cOvercome cChange cEvidence1 cEvidence2 cEvidence3 sWhere sSensory sUnique sMood sMoodHow sEffect sResearch pBeginning pInciting pObstacles pTurn pClimax pResolution pGoal pConflict pBefore pAfter pArc vPOV vWhy vFeel vDialogue vReveal vWords vStyle draftGoal rGoal rExample peerName peerGlow peerQuestion peerChange rReflection coverTitle coverSubtitle blurb authorsNote`.split(" ");
+let data=JSON.parse(localStorage.getItem("myAuthorStudio")||"{}");let internal=data.internal||[],external=data.external||[],chapters=data.chapters||[{title:"Chapter 1",text:""}];
+let modules=JSON.parse(localStorage.getItem("myAuthorModules")||"null")||[
+["Character & Perspective","ELA.5.R.1.3","Describe how an author develops a character’s perspective in a literary text.","Weeks 1–2"],
+["Setting & World Building","","Develop a setting that influences the story and character.","Weeks 3–4"],
+["Plot, Conflict & Structure","","Plan a compelling plot with meaningful conflict.","Weeks 5–8"],
+["Point of View, Voice & Dialogue","","Develop a distinct narrative voice and purposeful dialogue.","Weeks 9–12"],
+["Drafting the Manuscript","","Draft a complete original literary text.","Weeks 13–18"],
+["Revision, Editing & Illustration","","Revise for meaning, craft, conventions, and visual storytelling.","Weeks 19–25"],
+["Publishing & Author Celebration","","Prepare a polished book for publication.","Weeks 26–28+"]];
+
+function el(id){return document.getElementById(id)}
+function view(id,b){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));el(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active")}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function save(){fields.forEach(id=>{if(el(id))data[id]=el(id).value});data.internal=internal;data.external=external;data.chapters=chapters;document.querySelectorAll("[data-habit],[data-revise]").forEach(x=>data[x.dataset.habit||x.dataset.revise]=x.checked);localStorage.setItem("myAuthorStudio",JSON.stringify(data));render()}
+function load(){fields.forEach(id=>{if(el(id)&&data[id]!=null)el(id).value=data[id]});document.querySelectorAll("[data-habit],[data-revise]").forEach(x=>x.checked=!!data[x.dataset.habit||x.dataset.revise]);renderTraits("int");renderTraits("ext");renderChapters();render()}
+function trait(type){let x=el(type+"Input"),v=x.value.trim();if(!v)return;(type==="int"?internal:external).push(v);x.value="";renderTraits(type);save()}
+function renderTraits(type){let a=type==="int"?internal:external;el(type==="int"?"intTraits":"extTraits").innerHTML=a.map((v,i)=>`<span class="trait">${esc(v)} <button onclick="delTrait('${type}',${i})">×</button></span>`).join("")}
+function delTrait(t,i){(t==="int"?internal:external).splice(i,1);renderTraits(t);save()}
+function render(){let name=data.student||"Author";el("welcome").textContent=`Let's build your book, ${name}.`;el("coverAuthor").textContent="By "+(data.student||"Your Name");let total=fields.length+internal.length+external.length+modules.length;let filled=fields.filter(x=>data[x]&&String(data[x]).trim()).length+ (internal.length>0?1:0)+(external.length>0?1:0);let pct=Math.round(Math.min(100,filled/Math.max(1,fields.length)*100));el("overallBar").style.width=pct+"%";el("overallText").textContent=pct+"% of your studio complete";el("coverTitle").value=data.coverTitle||data.bookTitle||"";renderJourney();renderTeacher();renderPub();wordCount()}
+function renderJourney(){el("journey").innerHTML=modules.map((m,i)=>`<div class="module"><div class="modulehead"><b>${i+1}. ${esc(m[0])}</b><span class="status">${esc(m[3])}</span></div><div class="muted">${esc(m[2])}${m[1]?" • "+esc(m[1]):""}</div></div>`).join("")}
+function renderTeacher(){el("teacherModules").innerHTML=modules.map((m,i)=>`<div class="module"><div class="modulehead"><b>${esc(m[0])}</b><button class="btn danger" onclick="removeModule(${i})">Remove</button></div><div class="muted">${esc(m[1]||"No standard")}${m[3]?" • "+esc(m[3]):""}<br>${esc(m[2])}</div></div>`).join("")}
+function addTeacherModule(){let t=el("tmTitle").value.trim();if(!t)return;modules.push([t,el("tmStandard").value.trim(),el("tmGoal").value.trim(),el("tmWeeks").value.trim()]);localStorage.setItem("myAuthorModules",JSON.stringify(modules));["tmTitle","tmStandard","tmGoal","tmWeeks"].forEach(x=>el(x).value="");render()}
+function removeModule(i){if(i<7){alert("The core year-long modules stay in place. You can remove teacher-added modules.");return}modules.splice(i,1);localStorage.setItem("myAuthorModules",JSON.stringify(modules));render()}
+function addChapter(){chapters.push({title:"Chapter "+(chapters.length+1),text:""});renderChapters();save()}
+function renderChapters(){el("chapters").innerHTML=chapters.map((c,i)=>`<div class="chapter"><h3><input value="${esc(c.title)}" onchange="chapters[${i}].title=this.value;save()"><span class="wordcount">${c.text.trim()?c.text.trim().split(/\\s+/).length:0} words</span></h3><textarea oninput="chapters[${i}].text=this.value;save()">${esc(c.text)}</textarea><div class="actions"><button class="btn danger" onclick="deleteChapter(${i})">Delete chapter</button></div></div>`).join("")}
+function deleteChapter(i){if(chapters.length===1)return;chapters.splice(i,1);renderChapters();save()}
+function insertScenePrompt(){let prompts=["Open with your character wanting something.","Put your character in a place they do not want to be.","Let a choice create a new problem.","Reveal a belief through dialogue rather than explanation.","Make something go wrong—and make it matter."];let p=prompts[Math.floor(Math.random()*prompts.length)];chapters[chapters.length-1].text+="\\n\\n[WRITING PROMPT: "+p+"]\\n";renderChapters();save()}
+function wordCount(){let n=chapters.reduce((a,c)=>a+(c.text.trim()?c.text.trim().split(/\\s+/).length:0),0);if(el("wordCount"))el("wordCount").textContent=n.toLocaleString();let goal=Number(data.draftGoal||3000);if(el("draftBar"))el("draftBar").style.width=Math.min(100,n/goal*100)+"%"}
+function renderPub(){let arr=["My manuscript has a complete beginning, middle, and ending.","My character's perspective is clear.","My setting is developed.","I revised for stronger writing.","I edited conventions.","I created a title and cover.","I wrote a back-cover blurb.","I completed an author's note."];el("pubChecks").innerHTML=arr.map((x,i)=>`<div class="check"><input type="checkbox" data-pub="${i}" ${data["pub"+i]?"checked":""} onchange="data['pub'+${i}]=this.checked;save()"> ${x}</div>`).join("")}
+document.addEventListener("input",save);document.addEventListener("change",save);
+function exportProject(){save();let payload={data,modules};let blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(data.student||"author")+"-my-author-studio.json";a.click();URL.revokeObjectURL(a.href)}
+
+const CLOUD_KEY="myAuthorStudioCloudSettings";
+let cloudTimer=null;
+
+function cloudSettings(){
+  return JSON.parse(localStorage.getItem(CLOUD_KEY)||"{}");
+}
+function saveCloudSettings(){
+  const url=(el("cloudUrl")?.value||"").trim().replace(/\/$/,"");
+  const code=(el("classCode")?.value||"").trim();
+  localStorage.setItem(CLOUD_KEY,JSON.stringify({url,code}));
+  setCloudStatus("teacherCloudStatus", url && code ? "Cloud settings saved on this browser." : "Add both the Web App URL and class code.", !!(url&&code));
+  updateCloudStatus();
+}
+function loadCloudSettings(){
+  const s=cloudSettings();
+  if(el("cloudUrl")) el("cloudUrl").value=s.url||"";
+  if(el("classCode")) el("classCode").value=s.code||"";
+}
+function setCloudStatus(id,msg,ok=false){
+  const x=el(id); if(!x)return;
+  x.innerHTML=`<span class="${ok?'cloud-ok':'cloud-warn'}">${esc(msg)}</span>`;
+}
+function updateCloudStatus(msg){
+  const s=cloudSettings();
+  if(!el("cloudStatus")) return;
+  el("cloudStatus").innerHTML=s.url&&s.code
+    ? `<span class="sync-dot ok"></span>${esc(msg||"Class cloud connected on this browser. Changes still autosave locally.")}`
+    : `<span class="sync-dot"></span>Cloud sync is not configured yet.`;
+}
+async function cloudRequest(payload){
+  const s=cloudSettings();
+  if(!s.url||!s.code) throw new Error("Cloud settings are missing.");
+  const res=await fetch(s.url,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({...payload,classCode:s.code})
+  });
+  const text=await res.text();
+  let out={}; try{out=JSON.parse(text)}catch(e){throw new Error("The cloud service did not return JSON.")};
+  if(!out.ok) throw new Error(out.error||"Cloud request failed.");
+  return out;
+}
+function projectPayload(){
+  save();
+  return {
+    studentId:(data.studentId||"").trim(),
+    student:(data.student||"").trim(),
+    bookTitle:(data.bookTitle||"").trim(),
+    updatedAt:new Date().toISOString(),
+    data,
+    modules
+  };
+}
+async function cloudSave(silent=false){
+  try{
+    window.__cloudSyncing=true;
+    save();
+    window.__cloudSyncing=false;
+    const payload=projectPayload();
+    if(!payload.student){throw new Error("Enter your student author name first.");}
+    const out=await cloudRequest({action:"save",...payload});
+    updateCloudStatus(`Cloud copy saved ${new Date(out.updatedAt||Date.now()).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})}.`);
+    if(!silent) alert("Your project is saved to the class cloud. ☁️");
+  }catch(err){
+    window.__cloudSyncing=false;
+    updateCloudStatus();
+    if(!silent) alert(err.message);
+  }
+}
+async function cloudLoad(){
+  try{
+    const s=cloudSettings();
+    if(!data.student) {
+      const n=prompt("Enter your student author name exactly as your teacher has it:");
+      if(!n)return;
+      data.student=n.trim(); if(el("student"))el("student").value=data.student;
+      save();
+    }
+    const out=await cloudRequest({action:"load",studentId:data.studentId||"",student:data.student});
+    if(!out.data) throw new Error("No cloud copy was found for this author yet.");
+    const ok=confirm("Load the cloud copy? Your current browser copy will be replaced.");
+    if(!ok)return;
+    data=out.data;
+    modules=out.modules||modules;
+    localStorage.setItem("myAuthorStudio",JSON.stringify(data));
+    localStorage.setItem("myAuthorModules",JSON.stringify(modules));
+    load();
+    updateCloudStatus("Cloud copy loaded.");
+    alert("Your cloud copy is back in the studio! ✨");
+  }catch(err){alert(err.message)}
+}
+async function testCloud(){
+  try{
+    const out=await cloudRequest({action:"ping"});
+    setCloudStatus("teacherCloudStatus",out.message||"Connection works.",true);
+  }catch(err){setCloudStatus("teacherCloudStatus",err.message,false)}
+}
+async function loadClassRoster(){
+  try{
+    const out=await cloudRequest({action:"roster"});
+    const rows=out.rows||[];
+    if(!rows.length){el("classRoster").innerHTML="No saved student projects yet.";return;}
+    el("classRoster").innerHTML=`<div class="roster-grid">
+      <div class="roster-head">Student</div><div class="roster-head">Book</div><div class="roster-head">Progress</div><div class="roster-head">Last saved</div>
+      ${rows.map(r=>`<div><b>${esc(r.student||"Unnamed")}</b></div>
+        <div>${esc(r.bookTitle||"Untitled")}</div>
+        <div>${Number(r.progress||0)}%</div>
+        <div>${esc(r.updatedAt?new Date(r.updatedAt).toLocaleString():"—")}</div>`).join("")}
+    </div>`;
+  }catch(err){el("classRoster").innerHTML=`<span class="cloud-warn">${esc(err.message)}</span>`}
+}
+
+function importProject(e){
+  let f=e.target.files[0];if(!f)return;
+  let r=new FileReader();
+  r.onload=()=>{
+    try{
+      let x=JSON.parse(r.result);
+      data=x.data||{};modules=x.modules||modules;
+      localStorage.setItem("myAuthorStudio",JSON.stringify(data));
+      localStorage.setItem("myAuthorModules",JSON.stringify(modules));
+      load();alert("Your Author Studio project has been restored!");
+    }catch(err){alert("That project file could not be opened.")}
+  };
+  r.readAsText(f);
+}
+
+function progressSnapshot(){
+  const total=fields.length;
+  const filled=fields.filter(x=>data[x]&&String(data[x]).trim()).length+(internal.length?1:0)+(external.length?1:0);
+  return Math.round(Math.min(100,filled/Math.max(1,total)*100));
+}
+
+function save(){
+  fields.forEach(id=>{if(el(id))data[id]=el(id).value});
+  data.internal=internal;data.external=external;data.chapters=chapters;
+  data.studentId=data.studentId||((data.student||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""));
+  data.progress=progressSnapshot();
+  document.querySelectorAll("[data-habit],[data-revise]").forEach(x=>data[x.dataset.habit||x.dataset.revise]=x.checked);
+  localStorage.setItem("myAuthorStudio",JSON.stringify(data));
+  render();
+  clearTimeout(cloudTimer);
+  const s=cloudSettings();
+  if(!window.__cloudSyncing && s.url&&s.code&&data.student) cloudTimer=setTimeout(()=>cloudSave(true),1800);
+}
+
+loadCloudSettings();
+updateCloudStatus();
+load();
+</script>
+</body></html>
